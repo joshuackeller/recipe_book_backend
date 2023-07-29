@@ -17,7 +17,7 @@ RUN npm install pm2 -g
 COPY . .
 
 # Transpile TypeScript to JavaScript
-RUN npm run build
+RUN npm run tsc
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
