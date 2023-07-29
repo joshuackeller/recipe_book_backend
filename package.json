@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "tsc": "tsc",
+    "start:prod": "node build/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.1.0",

@@ -4,21 +4,15 @@ FROM node:18
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Copy package.json and package-lock.json into the directory /app in the container
-COPY package*.json ./
+# COPY ./build /build
+COPY ./package.json /package.json
+COPY ./package-lock.json /package-lock.json
 
-# Install the app dependencies inside the container
-RUN npm install && npm install -g ts-node pm2
-
-# If you are building your code for production
-# RUN npm ci --only=production
-
-# Bundle the app source inside the container
-COPY . .
+RUN npm install && npm install -g pm2 && npm run tsc
 
 # Make port 8080 available to the world outside this container
 EXPOSE 4500
 
 # Run the app when the container launches
-# CMD [ "npm", "start" ]
-CMD ["pm2-runtime", "start", "node_modules/.bin/ts-node", "src/index.ts"]
+# CMD [ "node", "build/index.js" ]
+CMD ["pm2-runtime", "build/index.js"]
