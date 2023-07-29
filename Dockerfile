@@ -20,7 +20,7 @@ COPY . .
 RUN npm run tsc
 
 # Make port 8080 available to the world outside this container
-EXPOSE 8080
+EXPOSE 80
 
 # Run the app when the container launches using PM2
 CMD ["pm2-runtime", "start", "build/index.js"]
