@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the app dependencies inside the container
-RUN npm install
+RUN npm i &&\
+    npm i pm2  -g
 
 # If you are building your code for production
 # RUN npm ci --only=production
@@ -20,4 +21,5 @@ COPY . .
 EXPOSE 4500
 
 # Run the app when the container launches
-CMD [ "npm", "start" ]
+# CMD [ "npm", "start" ]
+CMD ["pm2-runtime", "start", "src/index.ts"]
