@@ -21,4 +21,4 @@ EXPOSE 4500
 
 # Run the app when the container launches
 # CMD [ "npm", "start" ]
-CMD ["pm2-runtime", "start", "src/index.ts"]
+CMD ["pm2-runtime", "start", "node_modules/.bin/ts-node", "src/index.ts"]
