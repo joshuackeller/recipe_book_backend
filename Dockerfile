@@ -8,8 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the app dependencies inside the container
-RUN npm i &&\
-    npm i pm2  -g
+RUN npm install && npm install -g ts-node pm2
 
 # If you are building your code for production
 # RUN npm ci --only=production
