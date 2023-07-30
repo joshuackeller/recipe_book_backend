@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AccessCode {
+  code      Int      @id
+  attempts  Int      @default(0)
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Group {
+  id          Int           @id @default(autoincrement())
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime
+  GroupInvite GroupInvite[]
+  UserGroup   UserGroup[]
+}
+
+model GroupInvite {
+  phone   String
+  groupId Int
+  id      Int    @id @default(autoincrement())
+  Group   Group  @relation(fields: [groupId], references: [id])
+
+  @@unique([phone, groupId])
+  @@index([groupId], map: "GroupInvite_groupId_fkey")
+}
+
+model Recipe {
+  id        Int      @id @default(autoincrement())
+  html      String   @db.MediumText
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  name      String
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Tag       Tag[]
+
+  @@unique([id, userId])
+  @@index([userId], map: "Recipe_userId_fkey")
+}
+
+model Tag {
+  id     Int      @id @default(autoincrement())
+  name   String
+  userId Int
+  User   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Recipe Recipe[]
+
+  @@unique([id, userId])
+  @@index([userId], map: "Tag_userId_fkey")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  phone      String      @unique
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime
+  AccessCode AccessCode?
+  Recipe     Recipe[]
+  Tag        Tag[]
+  UserGroup  UserGroup[]
+}
+
+model UserGroup {
+  userId         Int
+  groupId        Int
+  autoAddRecipes Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+  Group          Group    @relation(fields: [groupId], references: [id])
+  User           User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, groupId])
+  @@index([groupId], map: "UserGroup_groupId_fkey")
+}

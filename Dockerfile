@@ -1,6 +1,10 @@
 # Use an official Node runtime as the base image
 FROM node:18
 
+# ENV variables
+ENV NODE_ENV=production
+ENV PORT=80
+
 # Set the working directory in the container to /app
 WORKDIR /app
 
@@ -8,13 +12,12 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the app dependencies inside the container
-RUN npm install
-
-# Install PM2 globally in the container
-RUN npm install pm2 -g
+RUN npm install && npm install pm2 -g
 
 # Copy the rest of the application code into the container
 COPY . .
+
+RUN  npx prisma generate
 
 # Transpile TypeScript to JavaScript
 RUN npm run tsc

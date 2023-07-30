@@ -1,18 +1,19 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import prisma from "./utilities/prismaClient";
 
-// const PORT = 4500;
-const PORT = 80;
-
-const app = new Hono()
-app.get('/', (c) => c.json({
-  hello: "there"
-}))
-
+const app = new Hono();
+app.get("/", async (c) => {
+  // const recipes = await prisma.recipe.findMany({});
+  return c.json({
+    env: process.env.NODE_ENV,
+    // recipes,
+  });
+});
 
 serve({
-    fetch: app.fetch,
-    port: PORT,
-  })
+  fetch: app.fetch,
+  port: parseInt(process.env.PORT ?? "4500"),
+});
 
-console.log(`Running on http://localhost:${PORT}`)
+console.log(`Running on http://localhost:${process.env.PORT ?? 4500}`);
