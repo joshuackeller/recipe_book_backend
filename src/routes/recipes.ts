@@ -1,37 +1,11 @@
 import { Hono } from "hono";
 import prisma from "../utilities/prismaClient";
 import CustomError from "../utilities/CustomError";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
-const jwt = require("jsonwebtoken");
+import Authorize from "../utilities/Authorize";
 
 const recipes = new Hono();
 
-recipes.use(async (c, next) => {
-  c.header("userId", undefined);
-  const token = c.req.header("Authorization");
-  let verified = false;
-  if (!!token) {
-    if (jwt.verify(token, process.env.JWT_SECRET)) {
-      verified = true;
-    } else {
-      return CustomError(c, "Invalid token", 403);
-    }
-  } else {
-    return CustomError(c, "Missing Authorization Header", 403);
-  }
-
-  if (verified) {
-    const { userId } = jwt.decode(token) as any;
-    c.req.headers.set("userId", userId);
-  } else {
-    return CustomError(c, "Invalid token");
-  }
-  if (!c.req.header("userId")) {
-    return CustomError(c, "Invalid token");
-  }
-  await next();
-});
+recipes.use("*", Authorize);
 
 recipes.get("/", async (c) => {
   const userId = c.req.header("userId");
