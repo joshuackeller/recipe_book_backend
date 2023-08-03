@@ -1,85 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
-}
-
-model AccessCode {
-  code      Int      @id
-  attempts  Int      @default(0)
-  userId    Int      @unique
-  createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Group {
-  id          Int           @id @default(autoincrement())
-  name        String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime
-  GroupInvite GroupInvite[]
-  UserGroup   UserGroup[]
-}
-
-model GroupInvite {
-  phone   String
-  groupId Int
-  id      Int    @id @default(autoincrement())
-  Group   Group  @relation(fields: [groupId], references: [id])
-
-  @@unique([phone, groupId])
-  @@index([groupId], map: "GroupInvite_groupId_fkey")
-}
-
-model Recipe {
-  id        Int      @id @default(autoincrement())
-  html      String   @db.MediumText
-  userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  name      String
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Tag       Tag[]
-
-  @@unique([id, userId])
-  @@index([userId], map: "Recipe_userId_fkey")
-}
-
-model Tag {
-  id     Int      @id @default(autoincrement())
-  name   String
-  userId Int
-  User   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Recipe Recipe[]
-
-  @@unique([id, userId])
-  @@index([userId], map: "Tag_userId_fkey")
 }
 
 model User {
   id         Int         @id @default(autoincrement())
   name       String
   phone      String      @unique
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime
-  AccessCode AccessCode?
-  Recipe     Recipe[]
-  Tag        Tag[]
-  UserGroup  UserGroup[]
+  accessCode AccessCode?
+  recipes    Recipe[]
+  tags       Tag[]
+  groups     UserGroup[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserGroup {
   userId         Int
+  user           User    @relation(fields: [userId], references: [id])
   groupId        Int
-  autoAddRecipes Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime
-  Group          Group    @relation(fields: [groupId], references: [id])
-  User           User     @relation(fields: [userId], references: [id])
+  group          Group   @relation(fields: [groupId], references: [id])
+  autoAddRecipes Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, groupId])
-  @@index([groupId], map: "UserGroup_groupId_fkey")
+}
+
+model Group {
+  id          Int           @id @default(autoincrement())
+  name        String
+  users       UserGroup[]
+  invitations GroupInvite[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupInvite {
+  id      Int    @id @default(autoincrement())
+  phone   String
+  groupId Int
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  @@unique([phone, groupId])
+}
+
+model AccessCode {
+  code     Int  @id
+  attempts Int  @default(0)
+  userId   Int  @unique
+  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Recipe {
+  id     Int    @id @default(autoincrement())
+  name   String
+  html   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags   Tag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, userId])
+}
+
+model Tag {
+  id      Int      @id @default(autoincrement())
+  name    String
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipes Recipe[]
+
+  @@unique([id, userId])
 }
