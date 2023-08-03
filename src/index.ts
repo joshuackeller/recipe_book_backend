@@ -15,11 +15,12 @@ app.onError((err, c) => {
   return c.json({ error: err.message }, c.res.status ?? 500);
 });
 
-const prod = process.env.NODE_ENV === "production";
+// const prod = process.env.NODE_ENV === "production";
 
 serve({
   fetch: app.fetch,
-  port: prod ? 80 : 4500,
+  port: 4500,
+  // hostname: "recipes-api.joshkeller.info"
   // serverOptions: prod ?
   //   {
   //     key: fs.readFileSync('../keys/agent1-key.pem'),
@@ -28,6 +29,7 @@ serve({
   //   hostname
   // createServer
   // https://github.com/honojs/node-server
+  // https://dev.to/greenteabiscuit/using-let-s-encrypt-on-aws-ec2-instance-2aca
 });
 
 console.log(`Running on http://localhost:${process.env.PORT ?? 4500}`);
