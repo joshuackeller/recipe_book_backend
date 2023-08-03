@@ -29,7 +29,7 @@ serve({
   //   hostname
   // createServer
   // https://github.com/honojs/node-server
-  // https://dev.to/greenteabiscuit/using-let-s-encrypt-on-aws-ec2-instance-2aca
+  // https://dev.to/shadid12/how-to-deploy-your-node-js-app-on-aws-with-nginx-and-ssl-3p5l
 });
 
 console.log(`Running on http://localhost:${process.env.PORT ?? 4500}`);
