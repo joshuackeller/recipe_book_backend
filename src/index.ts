@@ -3,9 +3,12 @@ import { Hono } from "hono";
 import auth from "./routes/auth";
 import { createServer } from "node:https";
 import fs from "node:fs";
+import recipes from "./routes/recipes";
 
 const app = new Hono();
+
 app.route("/auth", auth);
+app.route("/recipes", recipes);
 
 app.onError((err, c) => {
   console.error(err.message);

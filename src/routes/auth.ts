@@ -3,7 +3,6 @@ import prisma from "../utilities/prismaClient";
 import CustomError from "../utilities/CustomError";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-// import jwt from "jsonwebtoken";
 const jwt = require("jsonwebtoken");
 
 const auth = new Hono();
