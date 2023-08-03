@@ -23,7 +23,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the app dependencies inside the container
-RUN npm install && npm install pm2 -g && npm i --save-dev @types/jsonwebtoken
+RUN npm install && npm install pm2 -g && npm i --D @types/jsonwebtoken
 
 # Copy the rest of the application code into the container
 COPY . .
