@@ -19,7 +19,7 @@ app.onError((err, c) => {
 
 serve({
   fetch: app.fetch,
-  port: 4500,
+  port: 80,
   // hostname: "recipes-api.joshkeller.info"
   // serverOptions: prod ?
   //   {
