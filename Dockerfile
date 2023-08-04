@@ -9,7 +9,7 @@ ARG TWILIO_SID
 
 # ENV variables
 ENV NODE_ENV=production
-ENV PORT=80
+ENV PORT=4500
 ENV DATABASE_URL=$DATABASE_URL
 ENV JWT_SECRET=$JWT_SECRET
 ENV TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN
@@ -33,8 +33,8 @@ RUN  npx prisma generate
 # Transpile TypeScript to JavaScript
 RUN npm run tsc
 
-# Make port 8080 available to the world outside this container
-EXPOSE 80
+# Make port 4500 available to the world outside this container
+EXPOSE 4500
 
 # Run the app when the container launches using PM2
 CMD ["pm2-runtime", "start", "build/index.js"]
