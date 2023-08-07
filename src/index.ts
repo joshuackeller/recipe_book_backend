@@ -5,7 +5,7 @@ import recipes from "./routes/recipes";
 
 const app = new Hono();
 
-app.get("/", (c) => c.text("hello there"));
+app.get("/", (c) => c.text("hello there testin"));
 
 app.route("/auth", auth);
 app.route("/recipes", recipes);
