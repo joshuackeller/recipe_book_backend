@@ -16,9 +16,14 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOSTNAME: ${{ secrets.SSH_HOST }}
           USER_NAME: ${{ secrets.USER_NAME }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_PHONE: ${{ secrets.TWILIO_PHONE }}
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
 
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            /home/ubuntu/deploy.sh ${{ secrets.USER_NAME }}
+            /home/ubuntu/recipe_book_backend/deploy.sh ${{ secrets.DATABASE_URL }} ${{ secrets.JWT_SECRET }} ${{ secrets.TWILIO_AUTH_TOKEN }} ${{ secrets.TWILIO_PHONE }} ${{secrets.TWILIO_SID }}
           '
