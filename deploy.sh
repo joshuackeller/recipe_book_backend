@@ -20,7 +20,6 @@ docker build \
 --build-arg TWILIO_PHONE="$TWILIO_PHONE" \
 --build-arg TWILIO_SID="$TWILIO_SID" \
 -t recipes_image .
-docker run -p 4500:4500 --name recipes_container -d recipes_image 
 
 # RUN NEW IMAGE
 docker run -p 4500:4500 --name recipes_container -d recipes_image
