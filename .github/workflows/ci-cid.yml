@@ -26,9 +26,21 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/recipe_book_backend
-            ./deploy.sh ${{ secrets.DATABASE_URL }} \
-              ${{ secrets.JWT_SECRET }} \
-              ${{ secrets.TWILIO_AUTH_TOKEN }} \
-              ${{ secrets.TWILIO_PHONE }} \
-              ${{secrets.TWILIO_SID }} \
+            
+            docker stop recipes_container
+            docker rm recipes_container
+            docker rmi recipes_image
+
+            git pull
+
+            docker build \
+            --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --build-arg JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            --build-arg TWILIO_AUTH_TOKEN="${{ secrets.TWILIO_AUTH_TOKEN }}" \
+            --build-arg TWILIO_PHONE="${{ secrets.TWILIO_PHONE }}" \
+            --build-arg TWILIO_SID="${{ secrets.TWILIO_SID }}" \
+            -t recipes_image .
+
+            docker run -p 4500:4500 --name recipes_container -d recipes_image
+
           '
