@@ -20,10 +20,10 @@ const Authorize = async (c: Context, next: Next) => {
     const { userId } = jwt.decode(token) as any;
     c.req.headers.set("userId", userId);
   } else {
-    return CustomError(c, "Invalid token");
+    return CustomError(c, "Invalid token", 403);
   }
   if (!c.req.header("userId")) {
-    return CustomError(c, "Invalid token");
+    return CustomError(c, "Invalid token", 403);
   }
   await next();
 };
