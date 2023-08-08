@@ -18,12 +18,9 @@ app.onError((err, c) => {
   return c.json({ error: err.message }, c.res.status ?? 500);
 });
 
-// const prod = process.env.NODE_ENV === "production";
-
 serve({
   fetch: app.fetch,
   port: 4500,
-  // https://infisical.com/
 });
 
-console.log(`Running on http://localhost:${process.env.PORT ?? 4500}`);
+console.log(`Running on http://localhost:4500`);
