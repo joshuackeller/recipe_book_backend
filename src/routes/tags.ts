@@ -20,7 +20,6 @@ tags.get(
   async (c) => {
     const userId = c.req.header("userId");
     if (!userId) return CustomError(c, "Invalid token", 403);
-    const { tagId } = c.req.valid("param");
     const { search } = c.req.valid("query");
 
     return c.json(
@@ -30,6 +29,68 @@ tags.get(
           name: !!search ? { contains: search } : undefined,
         },
         take: 5,
+      })
+    );
+  }
+);
+
+tags.get(
+  "/:tagId",
+  zValidator(
+    "param",
+    z.object({
+      tagId: z.string(),
+    })
+  ),
+  async (c) => {
+    const userId = c.req.header("userId");
+    if (!userId) return CustomError(c, "Invalid token", 403);
+    const { tagId } = c.req.valid("param");
+
+    return c.json(
+      await prisma.tag.findUniqueOrThrow({
+        where: {
+          id_userId: {
+            id: parseInt(tagId),
+            userId: parseInt(userId),
+          },
+        },
+      })
+    );
+  }
+);
+
+tags.put(
+  "/:tagId",
+  zValidator(
+    "param",
+    z.object({
+      tagId: z.string(),
+    })
+  ),
+  zValidator(
+    "json",
+    z.object({
+      name: z.string(),
+    })
+  ),
+  async (c) => {
+    const userId = c.req.header("userId");
+    if (!userId) return CustomError(c, "Invalid token", 403);
+    const { tagId } = c.req.valid("param");
+    const { name } = c.req.valid("json");
+
+    return c.json(
+      await prisma.tag.update({
+        where: {
+          id_userId: {
+            id: parseInt(tagId),
+            userId: parseInt(userId),
+          },
+        },
+        data: {
+          name,
+        },
       })
     );
   }
@@ -65,6 +126,32 @@ tags.post(
                 },
               }
             : undefined,
+        },
+      })
+    );
+  }
+);
+
+tags.delete(
+  "/:tagId",
+  zValidator(
+    "param",
+    z.object({
+      tagId: z.string(),
+    })
+  ),
+  async (c) => {
+    const userId = c.req.header("userId");
+    if (!userId) return CustomError(c, "Invalid token", 403);
+    const { tagId } = c.req.valid("param");
+
+    return c.json(
+      await prisma.tag.delete({
+        where: {
+          id_userId: {
+            id: parseInt(tagId),
+            userId: parseInt(tagId),
+          },
         },
       })
     );

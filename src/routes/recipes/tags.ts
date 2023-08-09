@@ -9,22 +9,6 @@ const recipeTags = new Hono();
 
 recipeTags.use("*", Authorize);
 
-recipeTags.use(
-  "/:tagId",
-  zValidator(
-    "param",
-    z.object({
-      recipeId: z.string(),
-      tagId: z.string(),
-    })
-  ),
-  async (c) => {
-    const { recipeId, tagId } = c.req.valid("param");
-
-    return c.text(`made it to recipeId ${recipeId} and tag ${tagId}`);
-  }
-);
-
 recipeTags.post(
   "/:tagId",
   zValidator(
