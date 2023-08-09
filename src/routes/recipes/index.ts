@@ -4,36 +4,47 @@ import CustomError from "../../utilities/CustomError";
 import Authorize from "../../utilities/Authorize";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const recipes = new Hono();
 
 recipes.use("*", Authorize);
 
-recipes.get("/", async (c) => {
-  const userId = c.req.header("userId");
-  if (!userId) return CustomError(c, "Invalid token", 403);
-
-  //   const search = req.nextUrl.searchParams.get("search");
-  //   const stringTagIds = req.nextUrl.searchParams.get("tagIds");
-  //   const stringArrayTagIds = stringTagIds?.split(",");
-  //   const tagIds = stringArrayTagIds?.map((tagId) => parseInt(tagId));
-
-  // FIX mode: "insensitive"
-  //   const where: Prisma.RecipeWhereInput = {
-  //     userId,
-  //     tags: !!tagIds ? { some: { id: { in: tagIds } } } : undefined,
-  //     name: search ? { contains: search } : undefined,
-  //   };
-
-  return c.json(
-    await prisma.recipe.findMany({
-      where: {
-        userId: parseInt(userId),
-      },
-      take: 25,
+recipes.get(
+  "/",
+  zValidator(
+    "query",
+    z.object({
+      search: z.string().optional(),
     })
-  );
-});
+  ),
+  zValidator(
+    "queries",
+    z.object({
+      tagIds: z.array(z.string().transform((val) => parseInt(val))).optional(),
+    })
+  ),
+  async (c) => {
+    const userId = c.req.header("userId");
+    if (!userId) return CustomError(c, "Invalid token", 403);
+
+    const { search } = c.req.valid("query");
+    const { tagIds } = c.req.valid("queries");
+
+    const where: Prisma.RecipeWhereInput = {
+      userId: parseInt(userId),
+      tags: !!tagIds ? { some: { id: { in: tagIds } } } : undefined, // MAYBE MAKE THIS USE OR??
+      name: search ? { contains: search, mode: "insensitive" } : undefined,
+    };
+
+    return c.json(
+      await prisma.recipe.findMany({
+        where,
+        take: 25,
+      })
+    );
+  }
+);
 
 recipes.get(
   "/:recipeId",
@@ -76,7 +87,7 @@ recipes.post(
     z.object({
       name: z.string(),
       html: z.string(),
-      tags: z.array(z.object({ id: z.string() })),
+      tags: z.array(z.object({ id: z.number().optional(), name: z.string() })),
     })
   ),
   async (c) => {
