@@ -182,7 +182,7 @@ auth.post(
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
         setCookie(c, "token", token, {
           path: "/",
-          domain: "recipes-api.joshkeller.info",
+          // domain: "recipes-api.joshkeller.info",
         });
         return c.json({ token });
       } else {
