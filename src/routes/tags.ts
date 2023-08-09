@@ -27,6 +27,19 @@ tags.get(
         where: {
           userId: parseInt(userId),
           name: !!search ? { contains: search } : undefined,
+          recipes: {
+            some: {
+              groups: {
+                some: {
+                  users: {
+                    some: {
+                      userId: parseInt(userId),
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         take: 5,
       })
