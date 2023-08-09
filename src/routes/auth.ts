@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { setCookie } from "hono/cookie";
 import prisma from "../utilities/prismaClient";
 import CustomError from "../utilities/CustomError";
 import { zValidator } from "@hono/zod-validator";
@@ -179,6 +180,10 @@ auth.post(
         });
         // SUCCESS
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+        setCookie(c, "token", token, {
+          path: "/",
+          domain: "recipes-api.joshkeller.info",
+        });
         return c.json({ token });
       } else {
         return CustomError(c, "Could not create token.", 400);

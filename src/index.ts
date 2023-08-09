@@ -7,8 +7,11 @@ import tags from "./routes/tags";
 import groups from "./routes/groups";
 import groupInvitations from "./routes/groups/invitations";
 import groupUsers from "./routes/groups/users";
+import { cors } from "hono/cors";
 
 const app = new Hono();
+
+app.use("*", cors());
 
 app.get("/", (c) => c.text("hello there testin"));
 
