@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -24,10 +21,10 @@ model User {
 }
 
 model UserGroup {
-  userId         Int
-  user           User    @relation(fields: [userId], references: [id])
   groupId        Int
   group          Group   @relation(fields: [groupId], references: [id])
+  userId         Int
+  user           User    @relation(fields: [userId], references: [id])
   autoAddRecipes Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -39,8 +36,9 @@ model UserGroup {
 model Group {
   id          Int           @id @default(autoincrement())
   name        String
-  users       UserGroup[]
   invitations GroupInvite[]
+  users       UserGroup[]
+  recipes     Recipe[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -65,15 +63,16 @@ model AccessCode {
 }
 
 model Recipe {
-  id     Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   name   String
   html   String
   userId Int
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags   Tag[]
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags   Tag[]   @relation("RecipeToTag")
+  groups Group[]
 
-  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 
   @@unique([id, userId])
 }
@@ -83,7 +82,7 @@ model Tag {
   name    String
   userId  Int
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipes Recipe[]
+  recipes Recipe[] @relation("RecipeToTag")
 
   @@unique([id, userId])
 }

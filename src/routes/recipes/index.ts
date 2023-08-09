@@ -32,7 +32,10 @@ recipes.get(
     const { tagIds } = c.req.valid("queries");
 
     const where: Prisma.RecipeWhereInput = {
-      userId: parseInt(userId),
+      OR: [
+        { userId: parseInt(userId) },
+        { groups: { some: { users: { some: { userId: parseInt(userId) } } } } },
+      ],
       tags: !!tagIds ? { some: { id: { in: tagIds } } } : undefined, // MAYBE MAKE THIS USE OR??
       name: search ? { contains: search, mode: "insensitive" } : undefined,
     };
@@ -96,6 +99,20 @@ recipes.post(
 
     const { name, html, tags } = c.req.valid("json");
 
+    const { groups } = await prisma.user.findUniqueOrThrow({
+      where: { id: parseInt(userId) },
+      select: {
+        groups: {
+          where: {
+            autoAddRecipes: true,
+          },
+          select: {
+            groupId: true,
+          },
+        },
+      },
+    });
+
     return c.json(
       await prisma.recipe.create({
         data: {
@@ -103,7 +120,7 @@ recipes.post(
           name,
           html,
           tags:
-            tags && tags.length > 0
+            !!tags && tags.length > 0
               ? {
                   connectOrCreate: tags.map((tag: any) => ({
                     where: {
@@ -116,6 +133,14 @@ recipes.post(
                       name: tag.name,
                       user: { connect: { id: parseInt(userId) } },
                     },
+                  })),
+                }
+              : undefined,
+          groups:
+            !!groups && groups?.length > 0
+              ? {
+                  connect: groups.map((group) => ({
+                    id: group.groupId,
                   })),
                 }
               : undefined,
