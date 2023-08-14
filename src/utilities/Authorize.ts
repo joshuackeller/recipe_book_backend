@@ -3,7 +3,6 @@ import CustomError from "./CustomError";
 const jwt = require("jsonwebtoken");
 
 const Authorize = async (c: Context, next: Next) => {
-  c.header("userId", undefined);
   const token = c.req.header("Authorization");
   let verified = false;
   if (!!token) {

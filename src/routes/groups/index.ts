@@ -50,6 +50,18 @@ groups.get(
             },
           },
         },
+        include: {
+          users: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
       })
     );
   }

@@ -46,6 +46,7 @@ model Group {
 
 model GroupInvite {
   id      Int    @id @default(autoincrement())
+  name    String
   phone   String
   groupId Int
   group   Group  @relation(fields: [groupId], references: [id])

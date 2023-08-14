@@ -35,6 +35,10 @@ groupInvitations.get(
             },
           },
         },
+        select: {
+          id: true,
+          name: true,
+        },
       })
     );
   }
@@ -84,6 +88,7 @@ groupInvitations.post(
   zValidator(
     "json",
     z.object({
+      name: z.string(),
       phone: z
         .string()
         .regex(new RegExp(/^\+[1-9]\d{1,14}$/), "Invalid number"),
@@ -94,7 +99,7 @@ groupInvitations.post(
     if (!userId) return CustomError(c, "Invalid token", 403);
 
     const { groupId } = c.req.valid("param");
-    const { phone } = c.req.valid("json");
+    const { name, phone } = c.req.valid("json");
 
     // validate user is in group
     await prisma.group.findUniqueOrThrow({
@@ -111,6 +116,7 @@ groupInvitations.post(
     return c.json(
       await prisma.groupInvite.create({
         data: {
+          name,
           phone,
           groupId: parseInt(groupId),
         },

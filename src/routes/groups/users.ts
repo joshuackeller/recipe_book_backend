@@ -33,6 +33,12 @@ groupUsers.get(
             },
           },
         },
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       })
     );
   }
@@ -84,22 +90,19 @@ groupUsers.delete(
 
     const { groupId, userId } = c.req.valid("param");
 
-    // ensure user is in group
-    await prisma.userGroup.findUniqueOrThrow({
-      where: {
-        userId_groupId: {
-          userId: parseInt(authUserId),
-          groupId: parseInt(groupId),
-        },
-      },
-    });
-
     return c.json(
       await prisma.userGroup.delete({
         where: {
           userId_groupId: {
             userId: parseInt(userId),
             groupId: parseInt(groupId),
+          },
+          group: {
+            users: {
+              some: {
+                userId: parseInt(authUserId),
+              },
+            },
           },
         },
       })
