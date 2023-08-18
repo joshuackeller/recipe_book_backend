@@ -8,6 +8,7 @@ import groups from "./routes/groups";
 import groupInvitations from "./routes/groups/invitations";
 import groupUsers from "./routes/groups/users";
 import { cors } from "hono/cors";
+import invitations from "./routes/invitations";
 
 const app = new Hono();
 
@@ -22,6 +23,7 @@ app.route("/tags", tags);
 app.route("/groups", groups);
 app.route("/groups/:groupId/invitations", groupInvitations);
 app.route("/groups/:groupId/users", groupUsers);
+app.route("/invitations", invitations);
 
 app.onError((err, c) => {
   console.error(err.message);

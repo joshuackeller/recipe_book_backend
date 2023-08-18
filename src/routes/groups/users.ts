@@ -29,7 +29,13 @@ groupUsers.get(
           groups: {
             some: {
               groupId: parseInt(groupId),
-              userId: parseInt(userId),
+              group: {
+                users: {
+                  some: {
+                    userId: parseInt(userId),
+                  },
+                },
+              },
             },
           },
         },
