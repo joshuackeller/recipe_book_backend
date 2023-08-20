@@ -39,12 +39,6 @@ groupUsers.get(
             },
           },
         },
-        select: {
-          id: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-        },
       })
     );
   }

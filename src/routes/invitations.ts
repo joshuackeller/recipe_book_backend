@@ -22,7 +22,7 @@ invitations.get("", async (c) => {
   return c.json(
     await prisma.groupInvite.findMany({
       where: {
-        phone: user.phone,
+        email: user.email,
       },
       include: {
         group: true,
@@ -54,7 +54,7 @@ invitations.post(
     const invitation = await prisma.groupInvite.findUniqueOrThrow({
       where: {
         id: parseInt(invitationId),
-        phone: user.phone,
+        email: user.email,
       },
     });
 
@@ -71,8 +71,8 @@ invitations.post(
           },
           invitations: {
             delete: {
-              phone_groupId: {
-                phone: user.phone,
+              email_groupId: {
+                email: user.email,
                 groupId: invitation.groupId,
               },
             },
@@ -106,7 +106,7 @@ invitations.delete(
     const invitation = await prisma.groupInvite.findUniqueOrThrow({
       where: {
         id: parseInt(invitationId),
-        phone: user.phone,
+        email: user.email,
       },
     });
 
@@ -118,8 +118,8 @@ invitations.delete(
         data: {
           invitations: {
             delete: {
-              phone_groupId: {
-                phone: user.phone,
+              email_groupId: {
+                email: user.email,
                 groupId: invitation.groupId,
               },
             },

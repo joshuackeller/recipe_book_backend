@@ -9,8 +9,10 @@ datasource db {
 
 model User {
   id         Int         @id @default(autoincrement())
+  email      String      @unique
+  password   Password?   @relation("UserPassword")
   name       String
-  phone      String      @unique
+  phone      String?     @unique
   accessCode AccessCode?
   recipes    Recipe[]
   tags       Tag[]
@@ -18,6 +20,13 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Password {
+  id     Int    @id @default(autoincrement())
+  userId Int    @unique
+  user   User   @relation("UserPassword", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  hash   String
 }
 
 model UserGroup {
@@ -47,11 +56,11 @@ model Group {
 model GroupInvite {
   id      Int    @id @default(autoincrement())
   name    String
-  phone   String
+  email   String
   groupId Int
   group   Group  @relation(fields: [groupId], references: [id])
 
-  @@unique([phone, groupId])
+  @@unique([email, groupId])
 }
 
 model AccessCode {
