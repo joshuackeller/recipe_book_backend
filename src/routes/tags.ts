@@ -25,21 +25,25 @@ tags.get(
     return c.json(
       await prisma.tag.findMany({
         where: {
-          userId: parseInt(userId),
           name: !!search ? { contains: search } : undefined,
-          recipes: {
-            some: {
-              groups: {
+          OR: [
+            { userId: parseInt(userId) },
+            {
+              recipes: {
                 some: {
-                  users: {
+                  groups: {
                     some: {
-                      userId: parseInt(userId),
+                      users: {
+                        some: {
+                          userId: parseInt(userId),
+                        },
+                      },
                     },
                   },
                 },
               },
             },
-          },
+          ],
         },
         take: 5,
       })
