@@ -65,10 +65,15 @@ recipes.get(
     return c.json(
       await prisma.recipe.findUniqueOrThrow({
         where: {
-          id_userId: {
-            id: parseInt(recipeId),
-            userId: parseInt(userId),
-          },
+          id: parseInt(recipeId),
+          OR: [
+            { userId: parseInt(userId) },
+            {
+              groups: {
+                some: { users: { some: { userId: parseInt(userId) } } },
+              },
+            },
+          ],
         },
         include: {
           tags: {

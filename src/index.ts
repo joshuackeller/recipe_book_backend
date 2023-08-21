@@ -9,6 +9,7 @@ import groupInvitations from "./routes/groups/invitations";
 import groupUsers from "./routes/groups/users";
 import { cors } from "hono/cors";
 import invitations from "./routes/invitations";
+import { getCookie } from "hono/cookie";
 
 const app = new Hono();
 
