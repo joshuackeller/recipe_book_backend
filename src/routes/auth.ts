@@ -85,7 +85,6 @@ auth.post(
       return CustomError(c, "Please reset password");
     }
 
-    console.log(password, user.password.hash);
     const valid = await bcrypt.compare(password, user.password.hash);
 
     if (valid === true) {
