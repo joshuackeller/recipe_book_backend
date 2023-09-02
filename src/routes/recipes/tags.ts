@@ -60,26 +60,44 @@ recipeTags.delete(
     if (!userId) return CustomError(c, "Invalid token", 403);
     const { recipeId, tagId } = c.req.valid("param");
 
-    return c.json(
-      await prisma.tag.update({
+    const tag = await prisma.tag.update({
+      where: {
+        id_userId: {
+          id: parseInt(tagId),
+          userId: parseInt(userId),
+        },
+      },
+      data: {
+        recipes: {
+          disconnect: {
+            id_userId: {
+              id: parseInt(recipeId),
+              userId: parseInt(userId),
+            },
+          },
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            recipes: true,
+          },
+        },
+      },
+    });
+
+    if (tag._count.recipes < 1) {
+      await prisma.tag.delete({
         where: {
           id_userId: {
             id: parseInt(tagId),
             userId: parseInt(userId),
           },
         },
-        data: {
-          recipes: {
-            disconnect: {
-              id_userId: {
-                id: parseInt(recipeId),
-                userId: parseInt(userId),
-              },
-            },
-          },
-        },
-      })
-    );
+      });
+    }
+
+    return c.json(tag);
   }
 );
 
