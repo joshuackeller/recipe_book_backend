@@ -25,7 +25,9 @@ tags.get(
     return c.json(
       await prisma.tag.findMany({
         where: {
-          name: !!search ? { contains: search } : undefined,
+          name: !!search
+            ? { contains: search, mode: "insensitive" }
+            : undefined,
           OR: [
             { userId: parseInt(userId) },
             {

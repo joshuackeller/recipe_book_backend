@@ -130,7 +130,7 @@ recipes.post(
                   connectOrCreate: tags.map((tag: any) => ({
                     where: {
                       id_userId: {
-                        id: tag.id,
+                        id: tag.id ?? -1,
                         userId: parseInt(userId),
                       },
                     },
