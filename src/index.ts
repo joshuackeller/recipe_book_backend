@@ -10,6 +10,8 @@ import groupUsers from "./routes/groups/users";
 import { cors } from "hono/cors";
 import invitations from "./routes/invitations";
 import { getCookie } from "hono/cookie";
+import waitlist from "./routes/waitlist";
+import { Prisma } from "@prisma/client";
 
 const app = new Hono();
 
@@ -25,10 +27,17 @@ app.route("/groups", groups);
 app.route("/groups/:groupId/invitations", groupInvitations);
 app.route("/groups/:groupId/users", groupUsers);
 app.route("/invitations", invitations);
+app.route("/waitlist", waitlist);
 
 app.onError((err, c) => {
-  console.error(err.message);
-  return c.json({ error: err.message }, c.res.status ?? 500);
+  let message: string = err.message ?? "Unkown error";
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === "P2002") {
+      message = "Record already exists";
+    }
+  }
+  console.error(err);
+  return c.json({ error: message }, c.res.status ?? 500);
 });
 
 serve({
