@@ -56,30 +56,33 @@ invitations.post(
         id: parseInt(invitationId),
         email: user.email,
       },
+      include: {
+        group: true,
+      },
     });
 
-    return c.json(
-      await prisma.group.update({
-        where: {
-          id: invitation.groupId,
-        },
-        data: {
-          users: {
-            create: {
-              userId: parseInt(userId),
-            },
+    await prisma.group.update({
+      where: {
+        id: invitation.groupId,
+      },
+      data: {
+        users: {
+          create: {
+            userId: parseInt(userId),
           },
-          invitations: {
-            delete: {
-              email_groupId: {
-                email: user.email,
-                groupId: invitation.groupId,
-              },
+        },
+        invitations: {
+          delete: {
+            email_groupId: {
+              email: user.email,
+              groupId: invitation.groupId,
             },
           },
         },
-      })
-    );
+      },
+    });
+
+    return c.json(invitation);
   }
 );
 
@@ -108,25 +111,27 @@ invitations.delete(
         id: parseInt(invitationId),
         email: user.email,
       },
+      include: {
+        group: true,
+      },
     });
 
-    return c.json(
-      await prisma.group.update({
-        where: {
-          id: invitation.groupId,
-        },
-        data: {
-          invitations: {
-            delete: {
-              email_groupId: {
-                email: user.email,
-                groupId: invitation.groupId,
-              },
+    await prisma.group.update({
+      where: {
+        id: invitation.groupId,
+      },
+      data: {
+        invitations: {
+          delete: {
+            email_groupId: {
+              email: user.email,
+              groupId: invitation.groupId,
             },
           },
         },
-      })
-    );
+      },
+    });
+    return c.json(invitation);
   }
 );
 
