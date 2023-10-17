@@ -31,9 +31,9 @@ model Password {
 
 model UserGroup {
   groupId        Int
-  group          Group   @relation(fields: [groupId], references: [id])
+  group          Group   @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId         Int
-  user           User    @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   autoAddRecipes Boolean @default(true)
 
   createdAt DateTime @default(now())
