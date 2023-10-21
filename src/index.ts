@@ -13,6 +13,7 @@ import { getCookie } from "hono/cookie";
 import waitlist from "./routes/waitlist";
 import { Prisma } from "@prisma/client";
 
+// First comment to a live project using neovim
 const app = new Hono();
 
 app.use("*", cors());
