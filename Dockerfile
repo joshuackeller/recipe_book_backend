@@ -6,6 +6,7 @@ ARG JWT_SECRET
 ARG TWILIO_AUTH_TOKEN
 ARG TWILIO_PHONE
 ARG TWILIO_SID
+ARG RESEND_KEY
 
 # ENV variables
 ENV NODE_ENV=production
@@ -15,6 +16,7 @@ ENV JWT_SECRET=$JWT_SECRET
 ENV TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN
 ENV TWILIO_PHONE=$TWILIO_PHONE
 ENV TWILIO_SID=$TWILIO_SID
+ENV RESEND_KEY=$RESEND_KEY
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -38,3 +40,4 @@ EXPOSE 4500
 
 # Run the app when the container launches using PM2
 CMD ["pm2-runtime", "start", "build/index.js"]
+

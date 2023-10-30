@@ -3,6 +3,7 @@ JWT_SECRET=$2
 TWILIO_AUTH_TOKEN=$3
 TWILIO_PHONE=$4
 TWILIO_SID=$5
+RESEND_KEY=$5
 
 # STOP CURRENT PROCESS
 docker stop recipes_container
@@ -19,6 +20,7 @@ docker build \
 --build-arg TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN" \
 --build-arg TWILIO_PHONE="$TWILIO_PHONE" \
 --build-arg TWILIO_SID="$TWILIO_SID" \
+--build-arg RESEND_KEY="$RESEND_KEY" \
 -t recipes_image .
 
 # RUN NEW IMAGE

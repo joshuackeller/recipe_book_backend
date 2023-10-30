@@ -21,12 +21,13 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_PHONE: ${{ secrets.TWILIO_PHONE }}
           TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          RESEND_KEY: ${{ secrets.RESEND_KEY }}
 
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/recipe_book_backend
-            
+
             docker stop recipes_container
             docker rm recipes_container
             docker rmi recipes_image
@@ -39,6 +40,7 @@ jobs:
             --build-arg TWILIO_AUTH_TOKEN="${{ secrets.TWILIO_AUTH_TOKEN }}" \
             --build-arg TWILIO_PHONE="${{ secrets.TWILIO_PHONE }}" \
             --build-arg TWILIO_SID="${{ secrets.TWILIO_SID }}" \
+            --build-arg RESEND_KEY="${{ secrets.RESEND_KEY }}" \
             -t recipes_image .
 
             docker run -p 4500:4500 --name recipes_container -d recipes_image
