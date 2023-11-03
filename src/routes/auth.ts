@@ -6,12 +6,98 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
+import { Resend } from "resend";
+import SpecialToken, { SpecialTokenType } from "../utilities/SpecialToken";
+
+const resend = new Resend(process.env.RESEND_KEY);
 
 const SALT_ROUNDS = 15;
 
 const auth = new Hono();
 
 /// PASSWORD
+auth.get(
+  "/confirm",
+  zValidator(
+    "query",
+    z.object({
+      token: z.string().optional(),
+    }),
+  ),
+  async (c) => {
+    const { token } = c.req.valid("query");
+    try {
+      jwt.verify(token, SpecialToken(SpecialTokenType.confirm_account));
+      const { userId } = jwt.decode(token) as any;
+
+      await prisma.user.update({
+        where: {
+          id: parseInt(userId),
+        },
+        data: {
+          confirmed: true,
+        },
+      });
+
+      return c.redirect(
+        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_success`,
+      );
+    } catch {
+      return c.redirect(
+        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_error`,
+      );
+    }
+  },
+);
+
+auth.post(
+  "/resend",
+  zValidator(
+    "json",
+    z.object({
+      email: z.string().email(),
+    }),
+  ),
+  async (c) => {
+    const { email } = c.req.valid("json");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!!user) {
+      const token = jwt.sign(
+        { userId: user.id },
+        SpecialToken(SpecialTokenType.confirm_account),
+      );
+      try {
+        await resend.emails.send({
+          from: "Recipio <no-reply@mail.joshkeller.info>",
+          to: [email],
+          subject: "Confirm Email",
+          html: `
+            <div>
+                <p>Click the following link to confirm your email:  <a href="${process.env.API_URL}/auth/confirm?token=${token}"> ${process.env.API_URL}/auth/confirm?token=${token}</a></p>
+            </div>
+            `,
+          text: `Click the following link to confirm your email: ${process.env.API_URL}/auth/confirm?token=${token}`,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      return c.json({
+        message: "Email sent successfully",
+      });
+    } else {
+      return CustomError(
+        c,
+        "No account with this email was found. Please create a new account",
+        400,
+      );
+    }
+  },
+);
 
 auth.post(
   "/password/create_account",
@@ -21,7 +107,7 @@ auth.post(
       email: z.string().email(),
       name: z.string(),
       password: z.string().min(8, "Password must be 8 characters or more "),
-    })
+    }),
   ),
   async (c) => {
     const { email, name, password } = c.req.valid("json");
@@ -39,6 +125,7 @@ auth.post(
         data: {
           email,
           name,
+          confirmed: false,
           password: {
             create: {
               hash,
@@ -47,11 +134,32 @@ auth.post(
         },
       });
 
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-      setCookie(c, "token", token);
-      return c.json({ token });
+      const token = jwt.sign(
+        { userId: user.id },
+        SpecialToken(SpecialTokenType.confirm_account),
+      );
+      try {
+        await resend.emails.send({
+          from: "Recipio <no-reply@mail.joshkeller.info>",
+          to: [email],
+          subject: "Confirm Email",
+          html: `
+            <div>
+                <p>Click the following link to confirm your email:  <a href="${process.env.API_URL}/auth/confirm?token=${token}"> ${process.env.API_URL}/auth/confirm?token=${token}</a></p>
+            </div>
+            `,
+          text: `<p>Click the following link to confirm your email: ${process.env.API_URL}/auth/confirm?token=${token}`,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      return c.json({
+        message:
+          "Account created successfully. Confirm email before signing in.",
+      });
     }
-  }
+  },
 );
 
 auth.post(
@@ -61,7 +169,7 @@ auth.post(
     z.object({
       email: z.string(),
       password: z.string(),
-    })
+    }),
   ),
   async (c) => {
     const { email, password } = c.req.valid("json");
@@ -78,6 +186,9 @@ auth.post(
       });
     } catch {
       return CustomError(c, "Could not find an account with this email", 400);
+    }
+    if (!user.confirmed) {
+      return CustomError(c, "Please confirm email before signing in", 400);
     }
 
     // Missing code
@@ -100,7 +211,7 @@ auth.post(
     } else {
       return CustomError(c, "Incorrect email or password", 403);
     }
-  }
+  },
 );
 
 //// SMS

@@ -1,107 +1,108 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgres"
-  url      = env("DATABASE_URL")
+    provider = "postgres"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  email      String      @unique
-  password   Password?   @relation("UserPassword")
-  name       String
-  phone      String?     @unique
-  accessCode AccessCode?
-  recipes    Recipe[]
-  tags       Tag[]
-  groups     UserGroup[]
+    id         Int         @id @default(autoincrement())
+    email      String      @unique
+    password   Password?   @relation("UserPassword")
+    name       String
+    phone      String?     @unique
+    accessCode AccessCode?
+    recipes    Recipe[]
+    tags       Tag[]
+    groups     UserGroup[]
+    confirmed  Boolean     @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Password {
-  id     Int    @id @default(autoincrement())
-  userId Int    @unique
-  user   User   @relation("UserPassword", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  hash   String
+    id     Int    @id @default(autoincrement())
+    userId Int    @unique
+    user   User   @relation("UserPassword", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    hash   String
 }
 
 model UserGroup {
-  groupId        Int
-  group          Group   @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId         Int
-  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  autoAddRecipes Boolean @default(true)
+    groupId        Int
+    group          Group   @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId         Int
+    user           User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    autoAddRecipes Boolean @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@id([userId, groupId])
+    @@id([userId, groupId])
 }
 
 model Group {
-  id          Int           @id @default(autoincrement())
-  name        String
-  invitations GroupInvite[]
-  users       UserGroup[]
-  recipes     Recipe[]
+    id          Int           @id @default(autoincrement())
+    name        String
+    invitations GroupInvite[]
+    users       UserGroup[]
+    recipes     Recipe[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model GroupInvite {
-  id      Int    @id @default(autoincrement())
-  name    String
-  email   String
-  groupId Int
-  group   Group  @relation(fields: [groupId], references: [id])
+    id      Int    @id @default(autoincrement())
+    name    String
+    email   String
+    groupId Int
+    group   Group  @relation(fields: [groupId], references: [id])
 
-  @@unique([email, groupId])
+    @@unique([email, groupId])
 }
 
 model AccessCode {
-  code     Int  @id
-  attempts Int  @default(0)
-  userId   Int  @unique
-  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    code     Int  @id
+    attempts Int  @default(0)
+    userId   Int  @unique
+    user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+    createdAt DateTime @default(now())
 }
 
 model Recipe {
-  id     Int     @id @default(autoincrement())
-  name   String
-  html   String
-  userId Int
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags   Tag[]   @relation("RecipeToTag")
-  groups Group[]
+    id     Int     @id @default(autoincrement())
+    name   String
+    html   String
+    userId Int
+    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    tags   Tag[]   @relation("RecipeToTag")
+    groups Group[]
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
 
-  @@unique([id, userId])
+    @@unique([id, userId])
 }
 
 model Tag {
-  id      Int      @id @default(autoincrement())
-  name    String
-  userId  Int
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipes Recipe[] @relation("RecipeToTag")
+    id      Int      @id @default(autoincrement())
+    name    String
+    userId  Int
+    user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    recipes Recipe[] @relation("RecipeToTag")
 
-  @@unique([id, userId])
+    @@unique([id, userId])
 }
 
 model WaitlistMember {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
+    id    Int    @id @default(autoincrement())
+    name  String
+    email String @unique
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
 }
