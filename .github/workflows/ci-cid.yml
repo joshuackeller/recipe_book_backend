@@ -44,7 +44,7 @@ jobs:
             --build-arg TWILIO_SID="${{ secrets.TWILIO_SID }}" \
             --build-arg RESEND_KEY="${{ secrets.RESEND_KEY }}" \
             --build-arg API_URL="${{ secrets.API_URL }}" \
-            --build-arg API_URL="${{ secrets.WEBSITE_URL }}" \
+            --build-arg WEBSITE_URL="${{ secrets.WEBSITE_URL }}" \
             -t recipes_image .
 
             docker run -p 4500:4500 --name recipes_container -d recipes_image
