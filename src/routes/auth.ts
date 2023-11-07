@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 import { Resend } from "resend";
 import SpecialToken, { SpecialTokenType } from "../utilities/SpecialToken";
-
+//
 const resend = new Resend(process.env.RESEND_KEY);
 
 const SALT_ROUNDS = 15;
