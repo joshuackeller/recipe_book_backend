@@ -22,7 +22,7 @@ auth.get(
     "query",
     z.object({
       token: z.string().optional(),
-    }),
+    })
   ),
   async (c) => {
     const { token } = c.req.valid("query");
@@ -40,14 +40,14 @@ auth.get(
       });
 
       return c.redirect(
-        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_success`,
+        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_success`
       );
     } catch {
       return c.redirect(
-        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_error`,
+        `${process.env.WEBSITE_URL}/recipes?authFlow=confirm_error`
       );
     }
-  },
+  }
 );
 
 auth.post(
@@ -56,7 +56,7 @@ auth.post(
     "json",
     z.object({
       email: z.string().email(),
-    }),
+    })
   ),
   async (c) => {
     const { email } = c.req.valid("json");
@@ -69,7 +69,7 @@ auth.post(
     if (!!user) {
       const token = jwt.sign(
         { userId: user.id },
-        SpecialToken(SpecialTokenType.confirm_account),
+        SpecialToken(SpecialTokenType.confirm_account)
       );
       try {
         await resend.emails.send({
@@ -93,10 +93,10 @@ auth.post(
       return CustomError(
         c,
         "No account with this email was found. Please create a new account",
-        400,
+        400
       );
     }
-  },
+  }
 );
 
 auth.post(
@@ -107,7 +107,7 @@ auth.post(
       email: z.string().email(),
       name: z.string(),
       password: z.string().min(8, "Password must be 8 characters or more "),
-    }),
+    })
   ),
   async (c) => {
     const { email, name, password } = c.req.valid("json");
@@ -136,7 +136,7 @@ auth.post(
 
       const token = jwt.sign(
         { userId: user.id },
-        SpecialToken(SpecialTokenType.confirm_account),
+        SpecialToken(SpecialTokenType.confirm_account)
       );
       try {
         await resend.emails.send({
@@ -159,7 +159,7 @@ auth.post(
           "Account created successfully. Confirm email before signing in.",
       });
     }
-  },
+  }
 );
 
 auth.post(
@@ -169,7 +169,7 @@ auth.post(
     z.object({
       email: z.string(),
       password: z.string(),
-    }),
+    })
   ),
   async (c) => {
     const { email, password } = c.req.valid("json");
@@ -211,7 +211,7 @@ auth.post(
     } else {
       return CustomError(c, "Incorrect email or password", 403);
     }
-  },
+  }
 );
 
 //// SMS
