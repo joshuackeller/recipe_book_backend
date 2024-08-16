@@ -180,10 +180,15 @@ recipes.put(
     return c.json(
       await prisma.recipe.update({
         where: {
-          id_userId: {
-            userId: parseInt(userId),
-            id: parseInt(recipeId),
-          },
+          id: parseInt(recipeId),
+          OR: [
+            { userId: parseInt(userId) },
+            {
+              groups: {
+                some: { users: { some: { userId: parseInt(userId) } } },
+              },
+            },
+          ],
         },
         data: {
           name,
