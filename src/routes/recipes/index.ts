@@ -43,7 +43,6 @@ recipes.get(
     return c.json(
       await prisma.recipe.findMany({
         where,
-        take: 25,
       })
     );
   }
