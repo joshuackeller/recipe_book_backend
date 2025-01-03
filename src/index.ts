@@ -9,18 +9,14 @@ import groupInvitations from "./routes/groups/invitations";
 import groupUsers from "./routes/groups/users";
 import { cors } from "hono/cors";
 import invitations from "./routes/invitations";
-import { getCookie } from "hono/cookie";
 import waitlist from "./routes/waitlist";
 import { Prisma } from "@prisma/client";
 
-// First comment to a live project using neovim
 const app = new Hono();
 
 app.use("*", cors());
 
-app.get("/", (c) =>
-  c.text(`${process.env.WEBSITE_URL} ------ ${process.env.DATABASE_URL}`)
-);
+app.get("/", (c) => c.text("hello there testin"));
 
 app.route("/auth", auth);
 app.route("/recipes", recipes);
