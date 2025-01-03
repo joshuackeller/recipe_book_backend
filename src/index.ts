@@ -12,6 +12,7 @@ import invitations from "./routes/invitations";
 import waitlist from "./routes/waitlist";
 import { Prisma } from "@prisma/client";
 
+// testing new db
 const app = new Hono();
 
 app.use("*", cors());
