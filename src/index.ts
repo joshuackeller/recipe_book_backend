@@ -18,7 +18,9 @@ const app = new Hono();
 
 app.use("*", cors());
 
-app.get("/", (c) => c.text("hello there testin"));
+app.get("/", (c) =>
+  c.text(`${process.env.WEBSITE_URL} ------ ${process.env.DATABASE_URL}`)
+);
 
 app.route("/auth", auth);
 app.route("/recipes", recipes);
