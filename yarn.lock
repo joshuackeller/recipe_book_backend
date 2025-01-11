@@ -184,7 +184,7 @@
   resolved "https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@prisma/client@6.1.0":
+"@prisma/client@^6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.1.0.tgz#179d3b70586e7be522f6f1f0a82cca01396f719a"
   integrity sha512-AbQYc5+EJKm1Ydfq3KxwcGiy7wIbm4/QbjCKWWoNROtvy7d6a3gmAGkKjK0iUCzh+rHV8xDhD5Cge8ke/kiy5Q==
@@ -1169,7 +1169,7 @@ pretty@2.0.0:
     extend-shallow "^2.0.1"
     js-beautify "^1.6.12"
 
-prisma@6.1.0:
+prisma@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-6.1.0.tgz#738f657fdd5ab8e6775f385db81bf7e61c70fbaf"
   integrity sha512-aFI3Yi+ApUxkwCJJwyQSwpyzUX7YX3ihzuHNHOyv4GJg3X5tQsmRaJEnZ+ZyfHpMtnyahhmXVfbTZ+lS8ZtfKw==

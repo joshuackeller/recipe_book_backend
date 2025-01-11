@@ -17,7 +17,17 @@ const app = new Hono();
 
 app.use("*", cors());
 
-app.get("/", (c) => c.text("hello there testin"));
+app.get("/", (c) =>
+  c.json({
+    JWT_SECRET: process.env.JWT_SECRET,
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+    TWILIO_PHONE: process.env.TWILIO_PHONE,
+    TWILIO_SID: process.env.TWILIO_SID,
+    RESEND_KEY: process.env.RESEND_KEY,
+    API_URL: process.env.API_URL,
+    WEBSITE_URL: process.env.WEBSITE_URL,
+  })
+);
 
 app.route("/auth", auth);
 app.route("/recipes", recipes);
